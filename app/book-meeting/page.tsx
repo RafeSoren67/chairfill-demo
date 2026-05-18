@@ -73,8 +73,8 @@ export default function BookMeetingPage() {
             ))}
           </div>
           <p className="mt-5 text-sm leading-6 text-slate-500">
-            The scheduling link opens Calendly in the browser. The demo itself
-            remains local and does not call external APIs.
+            The scheduling link opens Calendly in the browser. The demo is a
+            safe preview of the patient follow-up experience.
           </p>
         </div>
       </section>

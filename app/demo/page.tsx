@@ -1,10 +1,9 @@
-import { RevenueLeakCalculator } from "../components/RevenueLeakCalculator";
 import { DemoFlow } from "./demo-flow";
 
 export const metadata = {
-  title: "ChairFill Demo | Local Office Brain Simulation",
+  title: "ChairFill Demo | Patient Follow-Up Simulation",
   description:
-    "A local-only scripted demo that shows ChairFill recovering missed patient opportunities and logging booked revenue.",
+    "See how ChairFill helps recover missed patient opportunities and log appointment requests.",
 };
 
 export default function DemoPage() {
@@ -17,10 +16,10 @@ export default function DemoPage() {
           </a>
           <div className="flex items-center gap-3">
             <a
-              href="/"
+              href="/revenue-calculator"
               className="hidden rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-[#07182f] sm:inline-flex"
             >
-              Landing page
+              Revenue Calculator
             </a>
             <a
               href="/book-meeting"
@@ -35,20 +34,18 @@ export default function DemoPage() {
       <section className="mx-auto max-w-7xl px-5 py-10 sm:px-6 lg:px-8">
         <div className="mb-8 max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#0d4f8b]">
-            Interactive local demo
+            Interactive demo
           </p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-[#07182f] sm:text-5xl">
-            Watch ChairFill Turn a Patient Reply Into Recovered Revenue
+            See ChairFill Recover a Missed Patient Opportunity
           </h1>
           <p className="mt-4 text-lg leading-8 text-slate-600">
-            Try a deterministic, ChatGPT-style office brain that adapts tone,
-            collects missing details, offers slots, confirms bookings, and logs
-            revenue without making any external API calls.
+            Watch how a missed call or patient inquiry turns into a follow-up,
+            booking opportunity, and logged revenue estimate.
           </p>
         </div>
         <DemoFlow />
       </section>
-      <RevenueLeakCalculator />
     </main>
   );
 }

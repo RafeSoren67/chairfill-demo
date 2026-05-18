@@ -1,4 +1,4 @@
-export type ToneProfile = "warm-professional" | "very-formal" | "casual";
+export type ToneProfile = "warm" | "professional" | "brief";
 
 export type ServiceKey = "cleaning" | "implantConsult" | "fillerConsult";
 
@@ -13,13 +13,13 @@ export type AvailableSlot = {
 export const clinicProfile = {
   clinicName: "Greenwood Dental",
   contactName: "Dr. Patel",
-  toneProfile: "warm-professional" as ToneProfile,
+  toneProfile: "warm" as ToneProfile,
   businessHours: {
     monFri: "8:00-5:00",
     sat: "8:00-12:00",
     sun: "closed",
   },
-  avgPadValue: 350,
+  avgPadValue: 275,
 };
 
 export const pricingByService: Record<ServiceKey, number> = {
@@ -94,12 +94,12 @@ export const availableSlots: AvailableSlot[] = [
 ];
 
 export const initialKPIs = {
-  inboundCalls: 124,
-  missedCalls: 51,
-  recoveredLeads: 6,
-  booked: 42,
-  reviews: 42,
-  recoveredRevenue: 15200,
+  inboundCalls: 186,
+  missedCalls: 18,
+  recoveredLeads: 5,
+  booked: 3,
+  reviews: 11,
+  recoveredRevenue: 1250,
 };
 
 export const initialBookings = [
@@ -108,7 +108,7 @@ export const initialBookings = [
     name: "Emily Carter",
     phone: "555-0128",
     service: "Cleaning",
-    datetime: "Thu, May 14 at 9:00 AM",
+    datetime: "Thu at 9:00 AM",
     source: "demo",
     value: 120,
   },
@@ -116,10 +116,19 @@ export const initialBookings = [
     id: "seed-2",
     name: "Lena Ortiz",
     phone: "555-0144",
-    service: "Filler consult",
-    datetime: "Fri, May 15 at 2:30 PM",
+    service: "New patient exam",
+    datetime: "Fri at 2:30 PM",
     source: "demo",
-    value: 300,
+    value: 275,
+  },
+  {
+    id: "seed-3",
+    name: "Marcus Reed",
+    phone: "555-0159",
+    service: "Whitening consult",
+    datetime: "Mon at 11:00 AM",
+    source: "demo",
+    value: 199,
   },
 ];
 
@@ -138,8 +147,8 @@ export const demoScenarios = [
   },
   {
     id: "after-hours",
-    name: "After-hours lead",
-    description: "Text-only filler consult",
+    name: "After-hours inquiry",
+    description: "Patient asks after the office is closed",
     initialMessages: [
       {
         from: "patient",
@@ -163,7 +172,7 @@ export const demoScenarios = [
   {
     id: "reactivation",
     name: "Reactivation",
-    description: "Inactive patient returns",
+    description: "Past patient returns",
     initialMessages: [
       {
         from: "system",

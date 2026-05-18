@@ -47,9 +47,9 @@ type Intent =
   | "unknown";
 
 const toneLabels: Record<ToneProfile, string> = {
-  "warm-professional": "Warm professional",
-  "very-formal": "Very formal",
-  casual: "Casual",
+  warm: "Warm",
+  professional: "Professional",
+  brief: "Brief",
 };
 
 const emptySlots: Slots = {};
@@ -146,12 +146,12 @@ function chooseSlot(text: string, service: ServiceKey) {
 }
 
 function toneIntro(tone: ToneProfile, name?: string) {
-  if (tone === "very-formal") {
+  if (tone === "professional") {
     return `Hello${name ? ` ${name}` : ""}. ${clinicProfile.clinicName} here.`;
   }
 
-  if (tone === "casual") {
-    return `Hey${name ? ` ${name}` : ""}! ${clinicProfile.clinicName} here.`;
+  if (tone === "brief") {
+    return `${clinicProfile.clinicName}${name ? ` for ${name}` : ""}:`;
   }
 
   return `Hi${name ? ` ${name}` : ""} - this is ${clinicProfile.clinicName}.`;
@@ -162,12 +162,12 @@ function offerSlotsText(service: ServiceKey, tone: ToneProfile, name?: string) {
   const serviceLabel = serviceLabels[service].toLowerCase();
   const intro = toneIntro(tone, name);
 
-  if (tone === "very-formal") {
+  if (tone === "professional") {
     return `${intro} We can schedule your ${serviceLabel} on ${slots[0].shortLabel} or ${slots[1].shortLabel}. Which time should we reserve?`;
   }
 
-  if (tone === "casual") {
-    return `${intro} We can do ${slots[0].shortLabel} or ${slots[1].shortLabel} for your ${serviceLabel}. Which is better?`;
+  if (tone === "brief") {
+    return `${intro} ${serviceLabel}: ${slots[0].shortLabel} or ${slots[1].shortLabel}. Which works?`;
   }
 
   return `${intro} Thanks for reaching out. We have ${slots[0].shortLabel} or ${slots[1].shortLabel} for your ${serviceLabel}. Which works best?`;
@@ -319,7 +319,7 @@ export function DemoFlow() {
     {
       id: "welcome",
       from: "assistant",
-      text: `${toneIntro(clinicProfile.toneProfile)} Send a patient message or choose a preset to see the local office brain recover the lead.`,
+      text: `${toneIntro(clinicProfile.toneProfile)} Send a patient message or choose a preset to see the ChairFill follow-up system recover an opportunity.`,
     },
   ]);
   const [slots, setSlots] = useState<Slots>(emptySlots);
@@ -342,9 +342,9 @@ export function DemoFlow() {
 
   const timeline = useMemo(
     () => [
-      { label: "Lead submitted", active: messages.length > 1 },
+      { label: "Missed call captured", active: messages.length > 1 },
       {
-        label: "SMS drafted",
+        label: "Text sent",
         active: messages.some((message) => message.from === "assistant") || !!draft,
       },
       {
@@ -352,10 +352,10 @@ export function DemoFlow() {
         active: messages.filter((message) => message.from === "patient").length > 0,
       },
       {
-        label: "Booking offer sent",
+        label: "Booking link shared",
         active: offeredSlots.length > 0 || !!slots.selectedSlot || isBooked,
       },
-      { label: "Booked and logged", active: isBooked },
+      { label: "Appointment request logged", active: isBooked },
     ],
     [messages, draft, offeredSlots.length, slots.selectedSlot, isBooked],
   );
@@ -365,7 +365,7 @@ export function DemoFlow() {
       {
         id: createId("assistant"),
         from: "assistant",
-        text: `${toneIntro(tone)} Send a patient message or choose a preset to see the local office brain recover the lead.`,
+        text: `${toneIntro(tone)} Send a patient message or choose a preset to see the ChairFill follow-up system recover an opportunity.`,
       },
     ]);
     setSlots({});
@@ -405,7 +405,7 @@ export function DemoFlow() {
       {
         id: createId("system"),
         from: "system",
-        text: `Booked - this demo adds the appointment to the practice dashboard and increases Estimated Recovered Revenue by ${formatCurrency(value)}.`,
+        text: `Appointment request logged - this demo adds the request to the practice dashboard and increases the estimated recovered revenue by ${formatCurrency(value)}.`,
       },
     ]);
   }
@@ -510,9 +510,9 @@ export function DemoFlow() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-[#0b2445]">
-        Simulation: This demo uses a local scripted "office brain" to show
-        typical behaviors. Production product uses configurable office rules and
-        optional AI models.
+        Simulation: This demo shows a typical ChairFill follow-up flow. In a
+        real practice, message rules, booking links, office hours, and handoff
+        preferences are customized during setup.
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
@@ -524,15 +524,15 @@ export function DemoFlow() {
                   Simulated SMS
                 </p>
                 <h2 className="mt-1 text-2xl font-semibold text-[#07182f]">
-                  Office Brain Conversation
+                  Patient Follow-Up Simulation
                 </h2>
               </div>
               <div>
                 <label className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
-                  Office voice
+                  Message tone
                 </label>
                 <div className="mt-2 flex rounded-full border border-slate-200 bg-slate-50 p-1">
-                  {(["warm-professional", "very-formal", "casual"] as ToneProfile[]).map(
+                  {(["warm", "professional", "brief"] as ToneProfile[]).map(
                     (option) => (
                       <button
                         key={option}
@@ -544,7 +544,7 @@ export function DemoFlow() {
                             : "text-slate-600 hover:text-[#07182f]"
                         }`}
                       >
-                        {toneLabels[option].replace(" professional", "")}
+                        {toneLabels[option]}
                       </button>
                     ),
                   )}
@@ -582,7 +582,7 @@ export function DemoFlow() {
               <div className="rounded-2xl border border-[#0d4f8b]/25 bg-white p-4 shadow-sm">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#0d4f8b]">
-                    Editable assistant draft
+                    Editable follow-up message
                   </p>
                   <button
                     type="button"
@@ -673,7 +673,7 @@ export function DemoFlow() {
             </h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">
               {toneLabels[tone]} voice, office-led booking rules, and
-              production behavior configurable by the practice.
+              handoff preferences customized for the practice.
             </p>
             <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
               <div className="rounded-xl bg-slate-50 p-3">
@@ -689,7 +689,7 @@ export function DemoFlow() {
                 </p>
               </div>
               <div className="rounded-xl bg-slate-50 p-3">
-                <p className="text-xs text-slate-500">Avg value</p>
+                <p className="text-xs text-slate-500">Average visit value</p>
                 <p className="font-semibold text-[#07182f]">
                   ${clinicProfile.avgPadValue}
                 </p>
@@ -701,8 +701,11 @@ export function DemoFlow() {
             {[
               ["Missed calls", kpis.missedCalls],
               ["Recovered leads", kpis.recoveredLeads],
-              ["Booked", kpis.booked],
-              ["Recovered revenue", formatCurrency(kpis.recoveredRevenue)],
+              ["Booked appointments", kpis.booked],
+              [
+                "Estimated recovered revenue",
+                formatCurrency(kpis.recoveredRevenue),
+              ],
             ].map(([label, value]) => (
               <div key={label} className="rounded-xl bg-[#f8fafc] p-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
@@ -778,15 +781,16 @@ export function DemoFlow() {
       <section className="grid gap-4 lg:grid-cols-[0.85fr_1.15fr]">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[#0d4f8b]">
-            Sales talk track
+            What this shows
           </p>
           <p className="mt-3 text-lg font-semibold text-[#07182f]">
-            ChairFill catches missed opportunities with office-led automation.
+            ChairFill catches patient opportunities that would otherwise be
+            easy to miss.
           </p>
           <p className="mt-3 text-sm leading-6 text-slate-600">
-            Watch this: a lead comes in after hours, ChairFill asks one short
-            question, offers two real-looking slots, and the patient says yes.
-            The booking is added to the dashboard and recovered revenue goes up.
+            A missed call or inquiry receives prompt follow-up, the patient gets
+            a clear next step, and the practice sees the appointment request and
+            estimated value in one place.
           </p>
           <div className="mt-5 flex flex-wrap gap-2">
             <button
@@ -817,29 +821,25 @@ export function DemoFlow() {
             Practice dashboard log
           </p>
           <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
-            <div className="grid grid-cols-[1fr_1fr_0.8fr] bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+            <div className="grid grid-cols-2 gap-3 bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500 sm:grid-cols-[1fr_1fr_1fr_0.8fr]">
               <p>Patient</p>
+              <p>Service</p>
               <p>Appointment</p>
-              <p>Value</p>
+              <p>Estimated value</p>
             </div>
             <div className="divide-y divide-slate-200">
-              {bookings.slice(0, 4).map((booking) => (
+              {bookings.slice(0, 3).map((booking) => (
                 <div
                   key={booking.id}
-                  className="grid grid-cols-[1fr_1fr_0.8fr] gap-3 px-4 py-3 text-sm"
+                  className="grid grid-cols-2 gap-3 px-4 py-3 text-sm sm:grid-cols-[1fr_1fr_1fr_0.8fr]"
                 >
-                  <div>
-                    <p className="font-semibold text-[#07182f]">
-                      {booking.name}
-                    </p>
-                    <p className="text-xs text-slate-500">{booking.phone}</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-700">
-                      {booking.service}
-                    </p>
-                    <p className="text-xs text-slate-500">{booking.datetime}</p>
-                  </div>
+                  <p className="font-semibold text-[#07182f]">
+                    {booking.name}
+                  </p>
+                  <p className="font-semibold text-slate-700">
+                    {booking.service}
+                  </p>
+                  <p className="text-slate-600">{booking.datetime}</p>
                   <p className="font-semibold text-emerald-700">
                     {formatCurrency(booking.value)}
                   </p>
